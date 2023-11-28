@@ -16,7 +16,6 @@ jcluser@vSRX1> show security flow session
 	Session ID: 413, Policy name: VPN-OUT/5, State: Stand-alone, Timeout: 4, Valid
 	  In: 10.100.11.2/49183 --> 10.100.22.2/331;icmp, Conn Tag: 0x0, If: ge-0/0/0.0, Pkts: 1, Bytes: 84, 
 	  Out: 10.100.22.2/331 --> 10.100.11.2/49183;icmp, Conn Tag: 0x0, If: st0.0, Pkts: 1, Bytes: 84, 
-
 jcluser@vSRX2> show security flow session    
 	Session ID: 615, Policy name: VPN-IN/7, State: Stand-alone, Timeout: 2, Valid
 	  In: 10.100.11.2/49183 --> 10.100.22.2/538;icmp, Conn Tag: 0x0, If: st0.0, Pkts: 1, Bytes: 84, 
@@ -29,7 +28,6 @@ jcluser@vSRX2> show security flow session
 	Session ID: 617, Policy name: VPN-IN/7, State: Stand-alone, Timeout: 4, Valid
 	  In: 10.100.11.2/49183 --> 10.100.22.2/540;icmp, Conn Tag: 0x0, If: st0.0, Pkts: 1, Bytes: 84, 
 	  Out: 10.100.22.2/540 --> 10.100.11.2/49183;icmp, Conn Tag: 0x0, If: ge-0/0/0.0, Pkts: 1, Bytes: 84, 
-
 
 // If Host2 pings Host1, the reverse applies i.e. SRX2 will use VPN-OUT while SRX1 will use VPN-IN. Hence in both SRX1 and SRX2,
 	we must configure VPN-IN and VPN-OUT as if the security policies are stateless. Below are the session tables when Host1 pings
@@ -54,7 +52,6 @@ jcluser@vSRX1> show security flow session
 	Session ID: 1286, Policy name: VPN-OUT/5, State: Stand-alone, Timeout: 4, Valid
 	  In: 10.100.11.2/49183 --> 10.100.22.2/935;icmp, Conn Tag: 0x0, If: ge-0/0/0.0, Pkts: 1, Bytes: 84, 
 	  Out: 10.100.22.2/935 --> 10.100.11.2/49183;icmp, Conn Tag: 0x0, If: st0.0, Pkts: 1, Bytes: 84, 
-
 jcluser@vSRX2> show security flow session    
 	Session ID: 1403, Policy name: VPN-IN/7, State: Stand-alone, Timeout: 2, Valid
 	  In: 10.100.11.2/49183 --> 10.100.22.2/996;icmp, Conn Tag: 0x0, If: st0.0, Pkts: 1, Bytes: 84, 
@@ -84,7 +81,6 @@ jcluser@vSRX2> show security flow session
 	  In: 10.100.11.2/49183 --> 10.100.22.2/999;icmp, Conn Tag: 0x0, If: st0.0, Pkts: 1, Bytes: 84, 
 	  Out: 10.100.22.2/999 --> 10.100.11.2/49183;icmp, Conn Tag: 0x0, If: ge-0/0/0.0, Pkts: 1, Bytes: 84, 
 
-
 // For host1 to reach the internet e.g. 172.32.13.2/30 on oobhr, we need SNAT at SRX1. SRX1 uses trust-to-internet-any policy 
 	to permit this. SRX2 uses it's host-inbound policy to permit this.
 jcluser@vSRX1> show security flow session    
@@ -103,7 +99,6 @@ jcluser@vSRX1> show security flow session
 	Session ID: 3506, Policy name: trust-to-internet-any/4, State: Stand-alone, Timeout: 4, Valid
 	  In: 10.100.11.2/36640 --> 172.32.13.2/4;icmp, Conn Tag: 0x0, If: ge-0/0/0.0, Pkts: 1, Bytes: 84, 
 	  Out: 172.32.13.2/4 --> 172.32.13.1/18083;icmp, Conn Tag: 0x0, If: ge-0/0/1.0, Pkts: 1, Bytes: 84, 
-
 jcluser@vSRX2> show security flow session    
 	Session ID: 3597, Policy name: self-traffic-policy/1, State: Stand-alone, Timeout: 2, Valid
 	  In: 172.32.13.1/6218 --> 172.32.13.2/106;icmp, Conn Tag: 0x0, If: ge-0/0/1.0, Pkts: 1, Bytes: 84, 
@@ -116,3 +111,79 @@ jcluser@vSRX2> show security flow session
 	Session ID: 3599, Policy name: self-traffic-policy/1, State: Stand-alone, Timeout: 4, Valid
 	  In: 172.32.13.1/18825 --> 172.32.13.2/108;icmp, Conn Tag: 0x0, If: ge-0/0/1.0, Pkts: 1, Bytes: 84, 
 	  Out: 172.32.13.2/108 --> 172.32.13.1/18825;icmp, Conn Tag: 0x0, If: .local..0, Pkts: 1, Bytes: 84, 
+
+// IKE Proposal:
+	authentication-method = Pre-shared keys 
+	authentication-algo = hmac-sha256-128
+	encryption-algo	= aes256-cbc
+	DH-group = DH-group-14
+jcluser@vSRX1> show security ike security-associations detail 
+	IKE peer 172.32.13.2, Index 7167687, Gateway Name: oobhr01-ike-gateway
+	  Role: Initiator, State: UP
+	  Initiator cookie: df99bf7079a04932, Responder cookie: c16f9b60042ebfc6
+	  Exchange type: IKEv2, Authentication method: Pre-shared-keys
+	  Local: 172.32.13.1:500, Remote: 172.32.13.2:500
+	  Lifetime: Expires in 28666 seconds
+	  Reauth Lifetime: Disabled
+	  IKE Fragmentation: Enabled, Size: 576
+	  Remote Access Client Info: Unknown Client
+	  Peer ike-id: 172.32.13.2
+	  AAA assigned IP: 0.0.0.0
+	  Algorithms:
+	   Authentication        : hmac-sha256-128 
+	   Encryption            : aes256-cbc
+	   Pseudo random function: hmac-sha256
+	   Diffie-Hellman group  : DH-group-14
+	  Traffic statistics:
+	   Input  bytes  :                  874
+	   Output bytes  :                  890
+	   Input  packets:                    3
+	   Output packets:                    3
+	   Input  fragmentated packets:       0
+	   Output fragmentated packets:       0
+	  IPSec security associations: 2 created, 0 deleted
+	  Phase 2 negotiations in progress: 1	
+
+	    Negotiation type: Quick mode, Role: Initiator, Message ID: 0
+	    Local: 172.32.13.1:500, Remote: 172.32.13.2:500
+	    Local identity: 172.32.13.1
+	    Remote identity: 172.32.13.2
+	    Flags: IKE SA is created
+
+// IPSec VPN Proposal:
+	security-protocol = ESP
+	authentication-algo = hmac-sha256-128
+	encryption-algo	= aes-cbc (256 bits)
+jcluser@vSRX1> show security ipsec security-associations detail
+	ID: 131073 Virtual-system: root, VPN Name: oobhr01-ipsec-vpn
+	  Local Gateway: 172.32.13.1, Remote Gateway: 172.32.13.2
+	  Local Identity: ipv4_subnet(any:0,[0..7]=0.0.0.0/0)
+	  Remote Identity: ipv4_subnet(any:0,[0..7]=0.0.0.0/0)
+	  Version: IKEv2
+	  DF-bit: clear, Copy-Outer-DSCP Disabled, Bind-interface: st0.0
+	  Port: 500, Nego#: 1, Fail#: 0, Def-Del#: 0 Flag: 0x600a29 
+	  Multi-sa, Configured SAs# 1, Negotiated SAs#: 1 
+	  Tunnel events: 
+	    Tue Nov 28 2023 08:26:19: IPSec SA negotiation successfully completed (1 times)
+	    Tue Nov 28 2023 08:26:19: IKE SA negotiation successfully completed (1 times)
+	    Tue Nov 28 2023 08:26:18: Tunnel is ready. Waiting for trigger event or peer to trigger negotiation (1 times)
+	    Tue Nov 28 2023 08:26:18: External interface's address received. Information updated (1 times)
+	    Tue Nov 28 2023 08:26:18: Bind-interface's zone received. Information updated (1 times)
+	    Tue Nov 28 2023 08:26:18: External interface's zone received. Information updated (1 times)
+	  Direction: inbound, SPI: 33702157, AUX-SPI: 0
+	                              , VPN Monitoring: -
+	    Hard lifetime: Expires in 3176 seconds
+	    Lifesize Remaining:  Unlimited
+	    Soft lifetime: Expires in 2568 seconds
+	    Mode: Tunnel(0 0), Type: dynamic, State: installed
+	    Protocol: ESP, Authentication: hmac-sha256-128, Encryption: aes-cbc (256 bits)
+	    Anti-replay service: counter-based enabled, Replay window size: 64
+	  Direction: outbound, SPI: 46c5a532, AUX-SPI: 0
+	                              , VPN Monitoring: -
+	    Hard lifetime: Expires in 3176 seconds
+	    Lifesize Remaining:  Unlimited
+	    Soft lifetime: Expires in 2568 seconds
+	    Mode: Tunnel(0 0), Type: dynamic, State: installed
+	    Protocol: ESP, Authentication: hmac-sha256-128, Encryption: aes-cbc (256 bits)
+	    Anti-replay service: counter-based enabled, Replay window size: 64
+
