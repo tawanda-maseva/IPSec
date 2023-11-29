@@ -11,4 +11,5 @@ v1: Set up a basic VPN Tunnel that allowed VPN communication through static rout
 v2: Added BGP to allow oobsr and oobhr to exchange VPN routes via BGP instead of static routes.<br>
 v3: Added SNAT to allow hosts to communicate to the internet.<br>
 v4: Changed set of IKE and IPsec proposals from standard to custom proposal set of encryption and authentication algorithms.<br>
+v5: Changed internet-to-SRX policies from protocol-based to application-based polices for deep-packet inspection. Only ICMP, SSH from COPR-Address, IKE and IPSEC permitted.
 <p>

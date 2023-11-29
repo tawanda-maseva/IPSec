@@ -29,9 +29,8 @@ jcluser@vSRX2> show security flow session
 	  In: 10.100.11.2/49183 --> 10.100.22.2/540;icmp, Conn Tag: 0x0, If: st0.0, Pkts: 1, Bytes: 84, 
 	  Out: 10.100.22.2/540 --> 10.100.11.2/49183;icmp, Conn Tag: 0x0, If: ge-0/0/0.0, Pkts: 1, Bytes: 84, 
 
-// If Host2 pings Host1, the reverse applies i.e. SRX2 will use VPN-OUT while SRX1 will use VPN-IN. Hence in both SRX1 and SRX2,
-	we must configure VPN-IN and VPN-OUT as if the security policies are stateless. Below are the session tables when Host1 pings
-	Host2 and Host2 pings Host1 simultaneosly. Notice that both the SRXs uses VPN-IN and VPN-OUT simultaneosly.
+// If Host2 pings Host1, the reverse applies i.e. SRX2 will use VPN-OUT while SRX1 will use VPN-IN. Hence in both SRX1 
+	and SRX2, we must configure VPN-IN and VPN-OUT as if the security policies are stateless. Below are the session tables when Host1 pings Host2 and Host2 pings Host1 simultaneosly. Notice that both the SRXs uses VPN-IN and VPN-OUT simultaneosly.
 jcluser@vSRX1> show security flow session    
 	Session ID: 1282, Policy name: VPN-OUT/5, State: Stand-alone, Timeout: 2, Valid
 	  In: 10.100.11.2/49183 --> 10.100.22.2/933;icmp, Conn Tag: 0x0, If: ge-0/0/0.0, Pkts: 1, Bytes: 84, 
@@ -187,3 +186,23 @@ jcluser@vSRX1> show security ipsec security-associations detail
 	    Protocol: ESP, Authentication: hmac-sha256-128, Encryption: aes-cbc (256 bits)
 	    Anti-replay service: counter-based enabled, Replay window size: 64
 
+
+
+// internet-to-junos-host policy uses applications to perform deep-packet inspection to packets destined to the SRX from
+	internet. When host1 pings oobhr01-ge0/0/1 that is facing the ISP, SRX2 allows this through the permit-good-icmp policy:
+jcluser@vSRX2> show security flow session 
+	Session ID: 8836, Policy name: permit-good-icmp/8, State: Stand-alone, Timeout: 2, Valid
+	  In: 172.32.13.1/20857 --> 172.32.13.2/922;icmp, Conn Tag: 0x0, If: ge-0/0/1.0, Pkts: 1, Bytes: 84, 
+	  Out: 172.32.13.2/922 --> 172.32.13.1/20857;icmp, Conn Tag: 0x0, If: .local..0, Pkts: 1, Bytes: 84, 	
+
+	Session ID: 8838, Policy name: permit-good-icmp/8, State: Stand-alone, Timeout: 2, Valid
+	  In: 172.32.13.1/28709 --> 172.32.13.2/923;icmp, Conn Tag: 0x0, If: ge-0/0/1.0, Pkts: 1, Bytes: 84, 
+	  Out: 172.32.13.2/923 --> 172.32.13.1/28709;icmp, Conn Tag: 0x0, If: .local..0, Pkts: 1, Bytes: 84, 	
+
+	Session ID: 8840, Policy name: permit-good-icmp/8, State: Stand-alone, Timeout: 4, Valid
+	  In: 172.32.13.1/31265 --> 172.32.13.2/924;icmp, Conn Tag: 0x0, If: ge-0/0/1.0, Pkts: 1, Bytes: 84, 
+	  Out: 172.32.13.2/924 --> 172.32.13.1/31265;icmp, Conn Tag: 0x0, If: .local..0, Pkts: 1, Bytes: 84, 	
+
+	Session ID: 8842, Policy name: permit-good-icmp/8, State: Stand-alone, Timeout: 4, Valid
+	  In: 172.32.13.1/18403 --> 172.32.13.2/925;icmp, Conn Tag: 0x0, If: ge-0/0/1.0, Pkts: 1, Bytes: 84, 
+	  Out: 172.32.13.2/925 --> 172.32.13.1/18403;icmp, Conn Tag: 0x0, If: .local..0, Pkts: 1, Bytes: 84, 
