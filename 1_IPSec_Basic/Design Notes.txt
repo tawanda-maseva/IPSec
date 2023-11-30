@@ -206,3 +206,24 @@ jcluser@vSRX2> show security flow session
 	Session ID: 8842, Policy name: permit-good-icmp/8, State: Stand-alone, Timeout: 4, Valid
 	  In: 172.32.13.1/18403 --> 172.32.13.2/925;icmp, Conn Tag: 0x0, If: ge-0/0/1.0, Pkts: 1, Bytes: 84, 
 	  Out: 172.32.13.2/925 --> 172.32.13.1/18403;icmp, Conn Tag: 0x0, If: .local..0, Pkts: 1, Bytes: 84, 
+
+// INTERNET-IDS Intrusion detection system (IDS) is configured facing the internet to protect the device from common IP, TCP
+	and ICMP attacks.
+jcluser@vSRX2> show security screen ids-option INTERNET-IDS 
+	Screen object status:	
+	Name                                       value      
+	  ICMP flood threshold                       100        
+	  TCP port scan threshold                    5000       
+	  ICMP address sweep threshold               5000       
+	  IP tear drop                               enabled    
+	  TCP SYN flood attack threshold             200        
+	  TCP SYN flood alarm threshold              512        
+	  TCP SYN flood source threshold             4000       
+	  TCP SYN flood destination threshold        4000       
+	  TCP SYN flood timeout                      20         
+	  IP spoofing                                enabled    
+	  ICMP ping of death                         enabled    
+	  IP source route option                     enabled    
+	  TCP land attack                            enabled    
+	  ICMP fragmentation                         enabled    
+	  Alarm without drop                         enabled    
