@@ -19,4 +19,5 @@ v5: Changed internet-to-SRX policies from protocol-based to application-based po
 v6: Added IDS to protect against IP, TCP and ICMP attacks from internet; updated oobhr to only advertise 10.0.0.0/8 aggregate prefix; removed static VPN prefixes.<br>
 v7: Used lo0 to model WIFI on oobsr; disallowed host1 internet access; host2 can access internet.<br>
 v8: Created OOB and POESW VRFs in OOBAS and OOBSR. Added OSPF for OOB prefix exchange between OOBAS and OOBSR. Redistributed the OSPF prefixes into BGP between OOBSR and OOBHR. Redistruted 10.0.0.0/8 from OOBHR into VRFs.<br>
+v9: Created internet VRF in OOBSR and OOBHR to separate default route from ISP and from OOBHR. Redistributed default route from OOBHR into OSPF. Removed default static route in OOBAS.
 <p>
